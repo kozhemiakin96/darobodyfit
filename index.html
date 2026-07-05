@@ -164,7 +164,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="prow"><span class="picon">📱</span><span class="ptxt">Al confirmar, se abrirá WhatsApp con el resumen de tu pedido — solo tienes que pulsar enviar.</span></div>
   </div>
   <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#bbb;line-height:1.5;text-align:center">
-    📲 Al pulsar: se abrirá <strong style="color:#25D366">WhatsApp</strong> con tu pedido — pulsa <strong>enviar</strong> y vuelve aquí para pagar.
+    📲 Al pulsar: se abrirá <strong style="color:#25D366">WhatsApp</strong> con tu pedido. Envíalo y vuelve aquí — te llevaremos al pago automáticamente.
   </div>
   <button class="wabtn" id="pay-btn" onclick="payAndNotify()">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
@@ -444,7 +444,9 @@ async function payAndNotify(){
   const errBox=document.getElementById("pay-error");
   errBox.style.display="none";
 
-  // 1) Preparamos el resumen y abrimos WhatsApp (el cliente pulsa enviar)
+  btn.disabled=true;
+  btn.textContent="Preparando tu pago...";
+
   let sub=0,orig=0;
   const lines=cart.map(c=>{
     const dp=disc(c.p.pvp);
@@ -453,14 +455,11 @@ async function payAndNotify(){
     return `• ${c.p.name} — ${c.flavor} x${c.qty} = ${fmt(tot)}`;
   });
   const sav=(orig-sub).toFixed(2).replace('.',',');
-  const msg=`🛒 *PEDIDO D'ARO BODY FIT*\n\n👤 *Cliente:* ${name}\n📍 Santa Cristina d'Aro\n\n*Productos:*\n${lines.join('\n')}\n\n🏷️ Precio original: ${fmt(orig)}\n🎉 Descuento 10%: -${sav}€\n💰 *TOTAL: ${fmt(sub)}*\n\n💳 _Pago con tarjeta iniciado — pendiente de confirmación_`;
-  window.open(`https://wa.me/34634614531?text=${encodeURIComponent(msg)}`,'_blank');
-
-  // 2) Llamamos a nuestra Netlify Function para crear la sesión de Stripe
-  btn.disabled=true;
-  btn.textContent="👈 Vuelve a esta pestaña tras enviar el WhatsApp...";
 
   try{
+    // 1) Creamos la sesión de Stripe PRIMERO (antes de tocar WhatsApp).
+    //    Así, aunque el WebView del gimnasio destruya la página al abrir
+    //    WhatsApp, ya tenemos el link de pago guardado y listo.
     const payload={
       clientName:name,
       cart:cart.map(c=>({id:c.p.id, flavor:c.flavor, qty:c.qty}))
@@ -474,8 +473,23 @@ async function payAndNotify(){
     if(!res.ok||!data.url){
       throw new Error(data.error||'No se pudo iniciar el pago');
     }
-    // 3) Redirigimos al cliente a la pasarela de pago de Stripe
-    window.location.href=data.url;
+
+    // 2) Guardamos el link de pago pendiente en localStorage.
+    //    Si la página se recarga o se cierra el WebView al volver de
+    //    WhatsApp, al reabrirla detectamos este valor y redirigimos solos.
+    localStorage.setItem('darobodyfit_pending_checkout', data.url);
+    localStorage.setItem('darobodyfit_pending_checkout_time', Date.now().toString());
+
+    // 3) Abrimos WhatsApp con el resumen del pedido
+    const msg=`🛒 *PEDIDO D'ARO BODY FIT*\n\n👤 *Cliente:* ${name}\n📍 Santa Cristina d'Aro\n\n*Productos:*\n${lines.join('\n')}\n\n🏷️ Precio original: ${fmt(orig)}\n🎉 Descuento 10%: -${sav}€\n💰 *TOTAL: ${fmt(sub)}*\n\n💳 _Pago con tarjeta iniciado — pendiente de confirmación_`;
+    window.location.href=`https://wa.me/34634614531?text=${encodeURIComponent(msg)}`;
+
+    // 4) Por si el navegador SÍ mantiene la página viva (Safari/Chrome normales),
+    //    mostramos también el botón de continuar manualmente tras un instante.
+    setTimeout(()=>{
+      showResumeButton(data.url);
+    }, 1200);
+
   }catch(err){
     console.error(err);
     errBox.textContent="⚠️ "+(err.message||"No se pudo iniciar el pago. Inténtalo de nuevo.");
@@ -484,6 +498,36 @@ async function payAndNotify(){
     btn.innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg> Confirmar pedido y pagar`;
   }
 }
+
+function showResumeButton(url){
+  const btn=document.getElementById("pay-btn");
+  if(!btn) return;
+  btn.disabled=false;
+  btn.onclick=null;
+  btn.innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg> Ya envié el WhatsApp → Ir a pagar`;
+  btn.addEventListener('click', function goPay(){
+    localStorage.removeItem('darobodyfit_pending_checkout');
+    localStorage.removeItem('darobodyfit_pending_checkout_time');
+    window.location.href=url;
+  }, {once:true});
+}
+
+// Al cargar (o volver a mostrar) la página, comprobamos si hay un pago
+// pendiente guardado (por ejemplo, si el WebView del gimnasio recargó
+// la página al volver de WhatsApp). Si lo hay y es reciente (<15 min),
+// lo retomamos automáticamente.
+function checkPendingCheckout(){
+  const url=localStorage.getItem('darobodyfit_pending_checkout');
+  const time=parseInt(localStorage.getItem('darobodyfit_pending_checkout_time')||'0',10);
+  if(url && (Date.now()-time) < 15*60*1000){
+    localStorage.removeItem('darobodyfit_pending_checkout');
+    localStorage.removeItem('darobodyfit_pending_checkout_time');
+    window.location.href=url;
+  }
+}
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) checkPendingCheckout(); });
+window.addEventListener('pageshow', checkPendingCheckout);
+checkPendingCheckout();
 
 renderCats();render();
 </script>
