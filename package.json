@@ -1,0 +1,8 @@
+{
+  "name": "darobodyfit-tienda",
+  "version": "1.0.0",
+  "description": "Tienda de suplementos D'ARO BODY FIT con pago Stripe",
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

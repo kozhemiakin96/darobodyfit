@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>D'ARO BODY FIT | Suplementos iO Genix</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f0f;color:#fff;min-height:100vh}
+.app{max-width:480px;margin:0 auto;min-height:100vh;background:#111;padding-bottom:80px}
+.header{background:#111;border-bottom:1px solid #1e1e1e;padding:14px 18px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between}
+.logo-name{font-size:16px;font-weight:700;color:#c9a84c;letter-spacing:1px}
+.logo-sub{font-size:10px;color:#666;margin-top:1px}
+.cart-btn{background:none;border:1.5px solid #c9a84c;border-radius:8px;padding:7px 13px;color:#c9a84c;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.badge{background:#c9a84c;color:#111;border-radius:50%;width:19px;height:19px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.banner{background:linear-gradient(135deg,#c9a84c,#e8c86a);color:#111;text-align:center;padding:10px 16px;font-size:13px;font-weight:600}
+.banner span{font-size:11px;font-weight:400;opacity:0.8;display:block;margin-top:2px}
+.search-wrap{padding:12px 14px;background:#111;border-bottom:1px solid #1a1a1a}
+.search-inner{position:relative}
+.search-wrap input{width:100%;padding:10px 14px 10px 38px;border:1px solid #2a2a2a;border-radius:10px;font-size:14px;background:#1a1a1a;color:#fff;outline:none}
+.search-wrap input::placeholder{color:#555}
+.search-wrap input:focus{border-color:#c9a84c55}
+.si{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#555;pointer-events:none}
+.cats-wrap{overflow-x:auto;padding:12px 14px;display:flex;gap:8px;background:#111;border-bottom:1px solid #1a1a1a;scrollbar-width:none}
+.cats-wrap::-webkit-scrollbar{display:none}
+.cat{padding:6px 14px;border-radius:20px;border:1px solid #2a2a2a;background:none;font-size:12px;color:#888;cursor:pointer;white-space:nowrap;transition:all 0.2s}
+.cat.on{background:#c9a84c;border-color:#c9a84c;color:#111;font-weight:600}
+.grid{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:#1a1a1a;border:1px solid #222;border-radius:12px;overflow:hidden}
+.card-emoji{font-size:38px;display:flex;align-items:center;justify-content:center;height:90px;background:#222}
+.card-body{padding:10px 11px 13px}
+.card-cat{font-size:10px;color:#c9a84c;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:3px}
+.card-name{font-size:13px;font-weight:600;color:#fff;line-height:1.3;margin-bottom:3px}
+.card-desc{font-size:11px;color:#666;line-height:1.3;margin-bottom:5px;min-height:26px}
+.flavor-hint{font-size:10px;color:#888;margin-bottom:6px}
+.price-row{display:flex;align-items:center;gap:5px;margin-bottom:8px;flex-wrap:wrap}
+.price-old{font-size:11px;color:#555;text-decoration:line-through}
+.price-new{font-size:15px;font-weight:700;color:#c9a84c}
+.price-save{font-size:10px;color:#4ade80;font-weight:600;background:#4ade8015;padding:2px 5px;border-radius:4px}
+.add-btn{width:100%;padding:8px 4px;background:#c9a84c;color:#111;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer}
+.add-btn.added{background:#1a4a2a;color:#4ade80;border:1px solid #2a6a3a}
+.empty-state{text-align:center;padding:50px 20px;color:#555;font-size:14px;grid-column:1/-1}
+
+/* MODAL */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.mbg.on{display:flex}
+.modal{background:#181818;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:20px 18px 30px;max-height:85vh;display:flex;flex-direction:column}
+.mheader{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.mtitle{font-size:15px;font-weight:700;color:#fff;flex:1;padding-right:12px;line-height:1.3}
+.mclose{background:none;border:none;color:#666;font-size:22px;cursor:pointer;line-height:1}
+.mclose:hover{color:#fff}
+.mprice{font-size:20px;font-weight:700;color:#c9a84c;margin-bottom:14px}
+.mprice small{font-size:13px;color:#555;text-decoration:line-through;margin-left:8px;font-weight:400}
+.mlabel{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:10px}
+.flist{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:8px}
+.flist::-webkit-scrollbar{width:3px}
+.flist::-webkit-scrollbar-thumb{background:#c9a84c44;border-radius:3px}
+.fopt{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid #2a2a2a;border-radius:10px;cursor:pointer;background:#1a1a1a;transition:all 0.15s}
+.fopt:hover{border-color:#c9a84c44;background:#222}
+.fopt.sel{border-color:#c9a84c;background:#c9a84c15}
+.fdot{width:16px;height:16px;border-radius:50%;border:2px solid #444;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.fopt.sel .fdot{border-color:#c9a84c;background:#c9a84c}
+.fdot-in{width:6px;height:6px;border-radius:50%;background:#111;display:none}
+.fopt.sel .fdot-in{display:block}
+.fname{font-size:13px;color:#ddd;font-weight:500}
+.mconfirm{width:100%;padding:14px;background:#c9a84c;color:#111;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:14px;flex-shrink:0}
+.mconfirm:disabled{background:#333;color:#666;cursor:not-allowed}
+
+/* CARRITO */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:none}
+.overlay.on{display:block}
+.cart-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:300;background:#151515;border-top:1px solid #2a2a2a;border-radius:20px 20px 0 0;padding:20px 18px 30px;display:none;max-height:90vh;overflow-y:auto}
+.cart-panel.on{display:block}
+.cheader{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.ctitle{font-size:16px;font-weight:700}
+.xbtn{background:none;border:none;color:#666;font-size:22px;cursor:pointer;line-height:1}
+.xbtn:hover{color:#fff}
+.clist{margin-bottom:14px}
+.ci{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid #1e1e1e;gap:8px}
+.ci-info{flex:1}
+.ci-name{font-size:13px;font-weight:500;color:#fff}
+.ci-fl{font-size:11px;color:#c9a84c;margin-top:2px}
+.ci-qty{font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;gap:6px}
+.qsmall{background:none;border:1px solid #333;border-radius:4px;color:#888;font-size:11px;cursor:pointer;padding:1px 7px;line-height:1.4}
+.ci-prices{text-align:right;flex-shrink:0}
+.ci-tot{font-size:14px;font-weight:600;color:#c9a84c}
+.ci-old{font-size:11px;color:#444;text-decoration:line-through}
+.rbtn{background:none;border:none;color:#444;cursor:pointer;font-size:16px;padding:2px 4px;flex-shrink:0}
+.rbtn:hover{color:#e55}
+.totbox{background:#1a1a1a;border-radius:10px;padding:12px 14px;margin-bottom:14px}
+.trow{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.trow:last-child{margin-bottom:0}
+.tlabel{color:#888}
+.tval{color:#fff;font-weight:500}
+.tdisc{color:#4ade80;font-weight:600}
+.tfinal{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid #2a2a2a;margin-top:6px}
+.tflabel{font-size:15px;font-weight:600}
+.tfval{font-size:20px;font-weight:700;color:#c9a84c}
+.cinput{width:100%;padding:11px 14px;border:1px solid #2a2a2a;border-radius:10px;font-size:14px;background:#1a1a1a;color:#fff;outline:none;margin-bottom:10px}
+.cinput::placeholder{color:#555}
+.cinput:focus{border-color:#c9a84c}
+.paybox{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:13px 14px;margin-bottom:14px}
+.ptitle{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;font-weight:600}
+.prow{display:flex;align-items:flex-start;gap:10px;margin-bottom:7px;font-size:13px}
+.prow:last-child{margin-bottom:0}
+.picon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+.ptxt{color:#bbb;line-height:1.4}
+.ptxt strong{color:#fff}
+.wabtn{width:100%;padding:14px;background:#25D366;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+.wabtn:hover{background:#20bd5a}
+.ecart{text-align:center;padding:30px 0;color:#555;font-size:14px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="logo-name">D'ARO BODY FIT</div>
+      <div class="logo-sub">Tienda iO Genix · Santa Cristina d'Aro</div>
+    </div>
+    <button class="cart-btn" onclick="toggleCart()">🛒 <span class="badge" id="badge">0</span></button>
+  </div>
+  <div class="banner">
+    🎉 ¡10% de descuento para clientes del gimnasio!
+    <span>Descuento aplicado automáticamente en todos los productos</span>
+  </div>
+  <div class="search-wrap">
+    <div class="search-inner">
+      <span class="si">🔍</span>
+      <input type="text" id="search" placeholder="Buscar producto..." oninput="render()">
+    </div>
+  </div>
+  <div class="cats-wrap" id="cats"></div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- MODAL SABORES -->
+<div class="mbg" id="mbg" onclick="closeFM(event)">
+  <div class="modal">
+    <div class="mheader">
+      <div class="mtitle" id="mtitle"></div>
+      <button class="mclose" onclick="closeF()">✕</button>
+    </div>
+    <div class="mprice" id="mprice"></div>
+    <div class="mlabel">🎨 Elige tu sabor</div>
+    <div class="flist" id="flist"></div>
+    <button class="mconfirm" id="mconfirm" onclick="confirmF()" disabled>Elige un sabor para continuar</button>
+  </div>
+</div>
+
+<!-- CARRITO -->
+<div class="overlay" id="overlay" onclick="toggleCart()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cheader">
+    <div class="ctitle">Tu pedido 🛒</div>
+    <button class="xbtn" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="clist" id="clist"></div>
+  <div class="totbox" id="totbox"></div>
+  <input class="cinput" type="text" id="cname" placeholder="Tu nombre y apellido (obligatorio)">
+  <div class="paybox">
+    <div class="ptitle">💳 Pago seguro con tarjeta</div>
+    <div class="prow"><span class="picon">🔒</span><span class="ptxt">Pago procesado de forma segura por <strong>Stripe</strong>. Aceptamos tarjeta, Apple Pay y Google Pay.</span></div>
+    <div class="prow"><span class="picon">📱</span><span class="ptxt">Al confirmar, se abrirá WhatsApp con el resumen de tu pedido — solo tienes que pulsar enviar.</span></div>
+  </div>
+  <button class="wabtn" id="pay-btn" onclick="payAndNotify()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+    Pagar con tarjeta
+  </button>
+  <div id="pay-error" style="display:none;color:#ff6b6b;font-size:12px;text-align:center;margin-top:10px"></div>
+</div>
+
+<script>
+const PRODUCTS = [
+  {id:1,cat:"Proteínas",name:"Whey 80 Professional 500g",desc:"500g · Lactomin + Digezyme",pvp:26.95,icon:"🥛",flavors:["Chocolate intenso","Black cookies","Fresa-nata","Rocher","Custard","Cookies & Cream","Peanut Butter & Cookies","Frapuccino","Mango-Piñeapple","Choco Milk Bar","Happy Cream","Red Velvet Cake","Stracciatella","Vanilla Coconut Cake","Choco White Rings","Chocolate Amazónico","Crema Rica Cookies","Petit Yogurt Strawberry & Banana","Pistachio Ice Cream","Vanilla Milkshake","Chokokrac KitKat","Chocolate Dubai","Pink Bun","Black cookies & white choco"]},
+  {id:2,cat:"Proteínas",name:"Whey 80 Professional 1kg",desc:"1000g · Whey concentrada alta proteína",pvp:49.95,icon:"🥛",flavors:["Chocolate intenso","Black cookies","Custard","Rocher","Fresa-nata","Choco White Rings","Chocolate Amazónico","Crema Rica Cookies","Petit Yogurt Strawberry & Banana","Vanilla Milkshake","Chokokrac KitKat","Pink Bun","Happy Cream","Stracciatella","Frapuccino","Mango Piña","Black cookies & white choco","Cookies & Cream","Peanut Cookies","Choco Milk Bar","Pistachio Ice Cream","Chocolate Dubai"]},
+  {id:3,cat:"Proteínas",name:"Whey 80 Professional 2kg",desc:"2000g · Formato ahorro",pvp:83.95,icon:"🥛",flavors:["Black cookies & white choco","Black cookies","Chocolate intenso","Fresa-nata","Custard","Bombon Rocher","Choco Milk Bar","Choco White Rings","Chocolate Amazónico","Crema Rica Cookies","Petit Yogurt Strawberry & Banana","Vanilla Milkshake","Chokokrac KitKat","Pink Bun","Cookies & Cream","Chocolate Dubai"]},
+  {id:4,cat:"Proteínas",name:"Whey Sublime 1500g",desc:"1500g · Whey premium con Toppings",pvp:57.95,icon:"💪",flavors:["Choco Milk Bar Crunchy","Milkyboom Choc","Jumanix","Cookie Dough","Black cookies Cheesecake","Rochello","White Choco Amazónico"]},
+  {id:5,cat:"Proteínas",name:"Iso Professional 500g",desc:"500g · Aislada Isolac Grass Fed + Digezyme",pvp:33.95,icon:"⚡",flavors:["Chocolate intenso","Bombon Rocher","Black cookies","Custard","Cookies & Cream","Peanut Butter & Cookies","Fresa-nata","Salted Caramel","Choco Milk Bar","Happy Cream","Red Velvet Cake","Stracciatella","Choco White Rings","Chocolate Amazónico","Crema Rica Cookies","Petit Yogurt Strawberry & Banana","Pistachio Ice Cream","Vanilla Milkshake","Chokokrac KitKat","Black cookies & white choco","Chocolate Dubai","Lemon Sorbet","Pink Bun"]},
+  {id:6,cat:"Proteínas",name:"Iso Professional 1kg",desc:"1000g · Aislada de alta calidad",pvp:63.95,icon:"⚡",flavors:["Chocolate intenso","Black cookies","Custard","Rocher","Fresa-nata","Choco White Rings","Chocolate Amazónico","Crema Rica Cookies","Petit Yogurt Strawberry & Banana","Vanilla Milkshake","Chokokrac KitKat","Pink Bun","Happy Cream","Salted Caramel","Pistachio Ice Cream","Stracciatella","Peanut Cookies","Black cookies & white choco","Choco Milk Bar","Cookies & Cream","Lemon Sorbet","Chocolate Dubai"]},
+  {id:7,cat:"Proteínas",name:"Iso Professional 2kg",desc:"2000g · Formato ahorro aislada",pvp:109.95,icon:"⚡",flavors:["Black cookies & chocolate blanco","Chocolate intenso","Custard","Black cookies","Bombon Rocher","Cookies & Cream","Fresa-nata","Choco Milk Bar","Choco White Rings","Chocolate Amazónico","Crema Rica Cookies","Petit Yogurt Strawberry & Banana","Vanilla Milkshake","Chokokrac KitKat","Pink Bun","Chocolate Dubai"]},
+  {id:8,cat:"Proteínas",name:"IsoWhey Sublime 1500g",desc:"1500g · Blend aislada con Toppings",pvp:76.95,icon:"💪",flavors:["Choco Milk Bar Crunchy","Milkyboom Choc","Jumanix","Cookie Dough","Black cookies Cheesecake","Rochello","White Choco Amazónico"]},
+  {id:9,cat:"Proteínas",name:"IsoZero Clear 900g",desc:"900g · 0% azúcar 0% lactosa 0% grasa",pvp:54.95,icon:"💧",flavors:["Blueberries","Ice Tea Peach","Raspberry","Strawberry-Mojito"]},
+  {id:10,cat:"Proteínas",name:"Casein Professional 900g",desc:"900g · Caseína liberación lenta",pvp:41.95,icon:"🌙",flavors:["Chocolate intenso","Black cookies"]},
+  {id:11,cat:"Proteínas",name:"Egg Professional 900g",desc:"900g · Proteína de huevo",pvp:37.75,icon:"🥚",flavors:["Neutral","Black cookies","Chocolate Intense"]},
+  {id:12,cat:"Proteínas",name:"Whey Nova Matrix 1kg",desc:"1000g · Next-Gen Multi-Proteína · Sin gluten",pvp:42.95,icon:"🆕",flavors:["Neutro","Chocolate","Leche Merengada","Vanilla","Cookies","White choco Raspberry"]},
+  {id:13,cat:"Proteínas",name:"Whey Nova Matrix 2kg",desc:"2000g · Nueva generación · Formato ahorro",pvp:74.95,icon:"🆕",flavors:["Chocolate","Vanilla","Cookies","White choco Raspberry"]},
+  {id:14,cat:"Proteínas",name:"Milk Protein Isolate 1kg",desc:"1000g · Alta pureza · Bajo en lactosa",pvp:45.95,icon:"🆕",flavors:["Neutro","Chocolate","Leche Merengada","Vanilla","Cookies","White choco Raspberry"]},
+  {id:15,cat:"Proteínas",name:"Slim Woman Protein 1kg",desc:"1000g · Proteína especial para mujeres",pvp:42.95,icon:"👩",flavors:["Chocolate","Fresa-nata"]},
+  {id:16,cat:"Proteínas",name:"Casein Cream 900g",desc:"900g · Crema de caseína con Toppings",pvp:38.95,icon:"🍮",flavors:["Nutchoc","Rochello","Stracciatella","Vanilla Cookies","Black cookies chocolate","Choco White Rings","Creamy Salted Peanut"]},
+  {id:17,cat:"Proteínas",name:"Vegan Protein 1000g",desc:"1000g · Proteína vegetal completa",pvp:31.35,icon:"🌱",flavors:["Chocolate"]},
+  {id:18,cat:"Proteínas",name:"Vegan Protein 900g",desc:"900g · Sin soja · Apto veganos",pvp:28.90,icon:"🌱",flavors:["Frapuccino","NutChoc","Marie Cookies","Banana ChocoChips"]},
+  {id:19,cat:"Proteínas",name:"IsoLuxe CFM 500g",desc:"500g · Isolac + Optipep · Sin gluten",pvp:37.00,icon:"✨",flavors:["Neutro","Chocolate intense","Chocolate & hazelnuts","White chocolate","Cookies & Cream","Strawberry","Vanilla Bourbon","Greek Yogurt & Blueberries","Dark Chocolate & Coconut","Banana & Pineapple","Creamy Peanut"]},
+  {id:20,cat:"Proteínas",name:"IsoLuxe CFM 1500g",desc:"1500g · Aislada premium de lujo",pvp:91.95,icon:"✨",flavors:["Neutro","Chocolate intense","Chocolate & hazelnuts","White chocolate","Cookies & Cream","Strawberry","Vanilla Bourbon","Greek Yogurt & Blueberries","Dark Chocolate & Coconut","Banana & Pineapple","Creamy Peanut"]},
+  {id:21,cat:"Gainers",name:"Lean Mass Professional 3kg",desc:"3000g · Hidratos alta calidad + WPC",pvp:50.95,icon:"📈",flavors:["Black cookies & chocolate blanco","Chocolate intenso","Crema Rica Cookies","Petit Yogurt Strawberry & Banana"]},
+  {id:22,cat:"Gainers",name:"Protein Mass Professional 4kg",desc:"4000g · Fórmula para resultados rápidos",pvp:55.95,icon:"📈",flavors:["Black cookies","Chocolate intenso","Vainilla avellanas","Crema Rica Cookies","Petit Yogurt Strawberry & Banana","Choco White Rings"]},
+  {id:23,cat:"Gainers",name:"Waxymaise 2kg",desc:"2000g · Amilopectina · Energía sostenida",pvp:25.45,icon:"🌽",flavors:["Neutro","Green Apple","Raspberry"]},
+  {id:24,cat:"Gainers",name:"Ciclodextrin 1kg",desc:"1000g · Cluster Dextrin · Absorción rápida",pvp:35.55,icon:"🌀",flavors:["Neutro","Raspberry","Ice Tea Lemon","Watermelon"]},
+  {id:25,cat:"Gainers",name:"Maltodextrina 1kg",desc:"1000g · Energía durante entrenamiento",pvp:13.65,icon:"⚡",flavors:["Limón","Peach"]},
+  {id:26,cat:"Gainers",name:"Dextrosa 1kg",desc:"1000g · Carbohidrato absorción rápida",pvp:12.65,icon:"🍬",flavors:["Limón","Manzana Verde"]},
+  {id:27,cat:"Aminoácidos",name:"Amino 10 EAA 500g",desc:"500g · 9 aminoácidos esenciales completos",pvp:19.95,icon:"🔬",flavors:["Cranberry","Lemon Lime","Lollipop","Orange","Raspberry","Watermelon Mojito"]},
+  {id:28,cat:"Aminoácidos",name:"Gluta + BCAA 8:1:1 500g",desc:"500g · BCAAs + Glutamina · Recuperación",pvp:29.95,icon:"💊",flavors:["Blue Cola","Green Apple","Mojito","Tutti Frutti","Peach"]},
+  {id:29,cat:"Aminoácidos",name:"Pure Glutamine Kyowa 300g",desc:"300g · Glutamina pura certificada",pvp:17.75,icon:"🔬",flavors:["Neutro"]},
+  {id:30,cat:"Aminoácidos",name:"Pure Glutamine 500g con sabor",desc:"500g · Glutamina con sabores",pvp:32.25,icon:"🔬",flavors:["Raspberry","Banana & Pineapple","Watermelon"]},
+  {id:31,cat:"Aminoácidos",name:"MVP BCAAs Vegan 8:1:1 300g",desc:"300g · BCAAs veganos ratio 8:1:1",pvp:20.95,icon:"🌿",flavors:["Blue Cola","Green Apple","Watermelon","Coco Lima","Peach"]},
+  {id:32,cat:"Aminoácidos",name:"BCAAs Vegan 2:1:1 500g",desc:"500g · BCAAs veganos fórmula básica",pvp:29.45,icon:"🌿",flavors:["Neutro"]},
+  {id:33,cat:"Aminoácidos",name:"BCAAs 2:1:1 Pro 150 comp.",desc:"150 comp. · 1000mg por comprimido",pvp:15.95,icon:"💊",flavors:["Sin sabor (comprimidos)"]},
+  {id:34,cat:"Aminoácidos",name:"BCAAs 8:1:1 Pro 300 comp.",desc:"300 comp. · Ratio profesional 8:1:1",pvp:31.45,icon:"💊",flavors:["Sin sabor (comprimidos)"]},
+  {id:35,cat:"Aminoácidos",name:"MVP Citrulline Malate 300g",desc:"300g · Citrulina · Bomba muscular",pvp:22.95,icon:"💪",flavors:["Neutro","Watermelon"]},
+  {id:36,cat:"Aminoácidos",name:"Arginine 3000 90 cáps.",desc:"90 cáps. · Arginina · Flujo sanguíneo",pvp:19.35,icon:"💊",flavors:["Sin sabor (cápsulas)"]},
+  {id:37,cat:"Aminoácidos",name:"Betalanina Professional 300g",desc:"300g · Beta-alanina · Resistencia",pvp:22.45,icon:"🔋",flavors:["Neutro","Watermelon"]},
+  {id:38,cat:"Aminoácidos",name:"HMB 1000mg 90 Tablets",desc:"90 comp. · Prevención catabolismo",pvp:21.95,icon:"🛡️",flavors:["Sin sabor (comprimidos)"]},
+  {id:39,cat:"Aminoácidos",name:"Pure Taurine 250g",desc:"250g · Taurina pura · Rendimiento",pvp:11.45,icon:"⚡",flavors:["Neutro"]},
+  {id:40,cat:"Aminoácidos",name:"M.A.P Luxury 415g",desc:"415g · Kyowa + AstraGin · Premium",pvp:39.95,icon:"✨",flavors:["Limón","Raspberry","Watermelon","Green Apple","Ice Tea Peach","Mango Loco"]},
+  {id:41,cat:"Aminoácidos",name:"Survival Train 430g",desc:"430g · Pre-entreno premium todo en uno",pvp:41.95,icon:"🚀",flavors:["Citric Limonade","Raspberry"]},
+  {id:42,cat:"Creatina",name:"iO.Creatine 300g",desc:"300g · Micronizada + Velox + Astragin",pvp:29.85,icon:"⚡",flavors:["Neutro","Watermelon"]},
+  {id:43,cat:"Creatina",name:"Creatine Micronized 300g",desc:"300g · Monohidrato 100% pureza 200 mesh",pvp:16.85,icon:"⚡",flavors:["Neutro"]},
+  {id:44,cat:"Creatina",name:"Creatine Micronized 650g",desc:"650g · 500g + 150g GRATIS incluidos",pvp:24.95,icon:"⚡",flavors:["Neutro","Peach","Watermelon","Lollipop","Banana & Pineapple","Blueberry","Energy Drink"]},
+  {id:45,cat:"Creatina",name:"Creatine 3000 150 comp.",desc:"150 comp. · Monohidrato en comprimidos",pvp:13.95,icon:"💊",flavors:["Sin sabor (comprimidos)"]},
+  {id:46,cat:"Creatina",name:"CreAluxe Creapure 180 cáps.",desc:"180 cáps. · Creatina Creapure Nº19AO16",pvp:24.45,icon:"👑",flavors:["Sin sabor (cápsulas)"]},
+  {id:47,cat:"Creatina",name:"CreAluxe Creapure 500g",desc:"500g · Creatina de máxima calidad",pvp:40.95,icon:"👑",flavors:["Neutro","Watermelon Mojito","Raspberry","Tutti Frutti"]},
+  {id:48,cat:"Creatina",name:"CreAluxe Chews 60 Tab.",desc:"60 comp. masticables · Creapure",pvp:15.95,icon:"🍬",flavors:["Banana Pineapple","Blueberries","Watermelon","Chocolate","Vanilla","Cookies"]},
+  {id:49,cat:"Creatina",name:"Creatine CP 250g",desc:"250g · Clonapure · Monohidrato + Fosfocreatina",pvp:19.95,icon:"🆕",flavors:["Neutral","Lemon Lime","Lollipop","Orange","Raspberry"]},
+  {id:50,cat:"Creatina",name:"Collagen Peptides + Creatine 300g",desc:"300g · Creavitalis + Fortigel + Albion",pvp:34.95,icon:"💎",flavors:["Watermelon","Vanilla","Frapuccino"]},
+  {id:51,cat:"Creatina",name:"Kre-Alkalyn 3K 120 cáps.",desc:"120 cáps. · Creatina tamponada premium",pvp:30.60,icon:"👑",flavors:["Sin sabor (cápsulas)"]},
+  {id:52,cat:"Creatina",name:"AAKG 3000 250g",desc:"250g · Arginina AKG · Óxido nítrico",pvp:22.45,icon:"💊",flavors:["Neutro"]},
+  {id:53,cat:"Pre-entreno",name:"Pre-Work 360g",desc:"360g · Creatina + AAKG + Citrulina · 0 azúcar",pvp:31.95,icon:"🚀",flavors:["Cola","Green Apple","Lollipop","Mojito"]},
+  {id:54,cat:"Pre-entreno",name:"Pre-Work No Stim 320g",desc:"320g · Sin cafeína · Beta-Alanina + Citrulina",pvp:28.95,icon:"🚀",flavors:["Lemonade Raspberry","Watermelon"]},
+  {id:55,cat:"Pre-entreno",name:"Russian Roulette Shots x20",desc:"20 shots x 60ml · Cafeína + AAKG + Citrulina",pvp:39.95,icon:"🎰",flavors:["Red Fruits & Green Apple","Cola & Lime Lemon","Watermelon & Orange"]},
+  {id:56,cat:"Pre-entreno",name:"iO.Pump Shots x12 botellas",desc:"12 botellas x 100ml (2 dosis cada una)",pvp:24.95,icon:"💉",flavors:["Cola Lime"]},
+  {id:57,cat:"Quemadores",name:"Mega Cuts 120 cáps.",desc:"120 mega caps. · Termogénico con Bioperine",pvp:33.50,icon:"🔥",flavors:["Sin sabor (cápsulas)"]},
+  {id:58,cat:"Quemadores",name:"Termo R8 120 cáps.",desc:"120 mega caps. · Termogénico avanzado",pvp:30.45,icon:"🔥",flavors:["Sin sabor (cápsulas)"]},
+  {id:59,cat:"Quemadores",name:"iO.Burner 60 cáps.",desc:"60 cáps. · Axivite Phenylcapsaicin · Potente",pvp:27.45,icon:"🔥",flavors:["Sin sabor (cápsulas)"]},
+  {id:60,cat:"Quemadores",name:"iO.Burner No Stim 60 cáps.",desc:"60 cáps. · Sin estimulantes · Axivite",pvp:27.45,icon:"🔥",flavors:["Sin sabor (cápsulas)"]},
+  {id:61,cat:"Quemadores",name:"Diure+ 90 cáps.",desc:"90 cáps. · Drenante y soporte detox",pvp:23.75,icon:"💧",flavors:["Sin sabor (cápsulas)"]},
+  {id:62,cat:"Quemadores",name:"CLA 1000mg 100 softgels",desc:"100 softgels · Ácido Linoleico Conjugado",pvp:18.15,icon:"💊",flavors:["Sin sabor (softgels)"]},
+  {id:63,cat:"Quemadores",name:"Carni 3000 90 cáps.",desc:"90 cáps. · 1000mg · Carnipure certificada",pvp:30.25,icon:"🍋",flavors:["Sin sabor (cápsulas)"]},
+  {id:64,cat:"Quemadores",name:"CarniLuxe Líquida 1L",desc:"1L · Carnipure líquida premium",pvp:24.95,icon:"🍋",flavors:["Green Apple","Limón","Raspberry","Red Fruits"]},
+  {id:65,cat:"Quemadores",name:"Green Tea Extract 60 cáps.",desc:"60 cáps. · Extracto té verde · Antioxidante",pvp:20.65,icon:"🍵",flavors:["Sin sabor (cápsulas)"]},
+  {id:66,cat:"Quemadores",name:"Thermo Luxe 120 cáps.",desc:"120 cáps. · Sinetrol + Caffeine · Premium",pvp:37.95,icon:"🔥",flavors:["Sin sabor (cápsulas)"]},
+  {id:67,cat:"Quemadores",name:"Carb Block 60 cáps.",desc:"60 cáps. · Bloqueador de carbohidratos",pvp:17.25,icon:"🚫",flavors:["Sin sabor (cápsulas)"]},
+  {id:68,cat:"Quemadores",name:"Caffeine 200mg 100 cáps.",desc:"100 cáps. · Cafeína pura · Energía y foco",pvp:10.25,icon:"☕",flavors:["Sin sabor (cápsulas)"]},
+  {id:69,cat:"Quemadores",name:"Bikini Pro 60 cáps.",desc:"60 cáps. · Para mujeres · Anti-celulitis",pvp:24.80,icon:"👙",flavors:["Sin sabor (cápsulas)"]},
+  {id:70,cat:"Salud Hormonal",name:"TestoMaxxx 120 cáps.",desc:"120 cáps. · Soporte muscular hormonal",pvp:33.55,icon:"💪",flavors:["Sin sabor (cápsulas)"]},
+  {id:71,cat:"Salud Hormonal",name:"ZMA B6 60 cáps.",desc:"60 cáps. · Zinc + Magnesio + Vitamina B6",pvp:14.20,icon:"💊",flavors:["Sin sabor (cápsulas)"]},
+  {id:72,cat:"Salud Hormonal",name:"ZMA Plus 60 cáps.",desc:"60 cáps. · ZMA + Triptófano + Melatonina",pvp:15.15,icon:"🌙",flavors:["Sin sabor (cápsulas)"]},
+  {id:73,cat:"Salud Hormonal",name:"DAA 3000 90 cáps.",desc:"90 cáps. · Ácido D-Aspártico",pvp:20.95,icon:"⚡",flavors:["Sin sabor (cápsulas)"]},
+  {id:74,cat:"Salud Hormonal",name:"Androblas 120 cáps.",desc:"120 cáps. · Tesnor + Bioperine + Zinc · Elite",pvp:45.45,icon:"🏆",flavors:["Sin sabor (cápsulas)"]},
+  {id:75,cat:"Salud Hormonal",name:"iO.Sterone 120 cáps.",desc:"120 cáps. · Beta-Ecdisterona + Zinc + Vit D",pvp:30.95,icon:"⚡",flavors:["Sin sabor (cápsulas)"]},
+  {id:76,cat:"Salud Hormonal",name:"TestoLuxe 120 cáps.",desc:"120 cáps. · PrimaVie + KSM66 + Testofen",pvp:37.95,icon:"👑",flavors:["Sin sabor (cápsulas)"]},
+  {id:77,cat:"Salud Hormonal",name:"GH Night Recovery 150 cáps.",desc:"150 cáps. · KSM66 + Astragin · Nocturno",pvp:30.95,icon:"🌙",flavors:["Sin sabor (cápsulas)"]},
+  {id:78,cat:"Vitaminas",name:"Multi AZ Sport 90 Tablets",desc:"90 comp. · Multivitamínico deportivo vegano",pvp:16.95,icon:"🌈",flavors:["Sin sabor (comprimidos)"]},
+  {id:79,cat:"Vitaminas",name:"Omega 3 90 softgels",desc:"90 softgels · EPA + DHA · Salud cardiovascular",pvp:21.85,icon:"🐟",flavors:["Sin sabor (softgels)"]},
+  {id:80,cat:"Vitaminas",name:"Super Omega 3 120 softgels",desc:"120 softgels · IFOS Certified · Friend of the Sea",pvp:30.95,icon:"🐟",flavors:["Sin sabor (softgels)"]},
+  {id:81,cat:"Vitaminas",name:"Krill Oil 60 softgels",desc:"60 softgels · Omega 3 + Fosfolípidos",pvp:19.95,icon:"🦐",flavors:["Sin sabor (softgels)"]},
+  {id:82,cat:"Vitaminas",name:"Vitamin D3+K2 Professional 60",desc:"60 comp. · Salud ósea e inmune",pvp:10.35,icon:"☀️",flavors:["Sin sabor (comprimidos)"]},
+  {id:83,cat:"Vitaminas",name:"Vitamin D3+K2 4000UI 90 Tab.",desc:"90 comp. · Alta dosis · Vegano",pvp:12.95,icon:"☀️",flavors:["Sin sabor (comprimidos)"]},
+  {id:84,cat:"Vitaminas",name:"Vita C 1000mg 90 cáps.",desc:"90 cáps. · Vitamina C · Inmunidad",pvp:14.45,icon:"🍊",flavors:["Sin sabor (cápsulas)"]},
+  {id:85,cat:"Vitaminas",name:"Vita C Plus 100 Tablets",desc:"100 comp. · Vit C + Bioflavonoides + Rosa Mosqueta",pvp:14.45,icon:"🍋",flavors:["Sin sabor (comprimidos)"]},
+  {id:86,cat:"Vitaminas",name:"Vitamin B Professional 60 comp.",desc:"60 comp. · Complejo B completo",pvp:10.65,icon:"💊",flavors:["Sin sabor (comprimidos)"]},
+  {id:87,cat:"Vitaminas",name:"Mag-3 Triple Magnesio 250g",desc:"250g · Bisglicinato + Citrato + Malato",pvp:19.95,icon:"🧲",flavors:["Iced Tea Peach","Raspberry","Vanilla"]},
+  {id:88,cat:"Vitaminas",name:"Magnesium Bisglycinate Albion 60",desc:"60 cáps. · Albion certificado · Alta biodisponibilidad",pvp:18.95,icon:"🧲",flavors:["Sin sabor (cápsulas)"]},
+  {id:89,cat:"Vitaminas",name:"Magnesium L-Threonate 90 cáps.",desc:"90 cáps. · Magtein · Cerebro y cognitivo",pvp:59.95,icon:"🧠",flavors:["Sin sabor (cápsulas)"]},
+  {id:90,cat:"Vitaminas",name:"Zinc Bisglycinate 60 cáps.",desc:"60 cáps. · Paul Lohmann · Alta absorción",pvp:9.25,icon:"💊",flavors:["Sin sabor (cápsulas)"]},
+  {id:91,cat:"Vitaminas",name:"ZMA Alpha 90 cáps.",desc:"90 cáps. · Melotime + Mg Paul Lohmann",pvp:14.95,icon:"🌙",flavors:["Sin sabor (cápsulas)"]},
+  {id:92,cat:"Vitaminas",name:"KSM-66 Ashwagandha 90 cáps.",desc:"90 cáps. · Adaptógeno premium · Estrés",pvp:25.95,icon:"🌿",flavors:["Sin sabor (cápsulas)"]},
+  {id:93,cat:"Vitaminas",name:"NAD+ 500mg 60 cáps.",desc:"60 cáps. · Anti-aging · Energía celular",pvp:29.95,icon:"⚗️",flavors:["Sin sabor (cápsulas)"]},
+  {id:94,cat:"Vitaminas",name:"Resveratrol 500 60 cáps.",desc:"60 cáps. · Antioxidante potente · Vegano",pvp:20.95,icon:"🍇",flavors:["Sin sabor (cápsulas)"]},
+  {id:95,cat:"Vitaminas",name:"CoQ-10 60 softgels",desc:"60 softgels · Coenzima Q10 · Energía mitocondrial",pvp:18.95,icon:"❤️",flavors:["Sin sabor (softgels)"]},
+  {id:96,cat:"Vitaminas",name:"Melatonin ER 90 comp.",desc:"90 comp. · Extended Release · Sueño profundo",pvp:19.95,icon:"🌙",flavors:["Sin sabor (comprimidos)"]},
+  {id:97,cat:"Vitaminas",name:"Probiotic Professional 60 cáps.",desc:"60 cáps. · Flora intestinal · Digestión",pvp:15.95,icon:"🦠",flavors:["Sin sabor (cápsulas)"]},
+  {id:98,cat:"Vitaminas",name:"Vitamin E+ 400 IU 60 softgels",desc:"60 softgels · Vitamina E antioxidante",pvp:11.95,icon:"💛",flavors:["Sin sabor (softgels)"]},
+  {id:99,cat:"Colágeno & Belleza",name:"Beauty Collagen 300g",desc:"300g · Verisol + Fortigel · 6 activos",pvp:33.90,icon:"💎",flavors:["Lemon","White Chocolate","Ice Tea Peach","Raspberry","Vanilla"]},
+  {id:100,cat:"Colágeno & Belleza",name:"Collagen Peptides Fortigel 320g",desc:"320g · Fortigel certificado · Articulaciones",pvp:29.95,icon:"🦴",flavors:["Limón"]},
+  {id:101,cat:"Colágeno & Belleza",name:"Collagen 400g",desc:"400g · Colágeno hidrolizado · Piel",pvp:25.35,icon:"💅",flavors:["Limón","Red Fruits"]},
+  {id:102,cat:"Colágeno & Belleza",name:"Life Hair 120 cáps.",desc:"120 cáps. · Cabello, piel y uñas",pvp:21.95,icon:"💇",flavors:["Sin sabor (cápsulas)"]},
+  {id:103,cat:"Colágeno & Belleza",name:"Glutathione Liposomal 60 cáps.",desc:"60 cáps. · Liposovit Glutathione · Antioxidante",pvp:39.95,icon:"✨",flavors:["Sin sabor (cápsulas)"]},
+  {id:104,cat:"Colágeno & Belleza",name:"Vitamin C Liposomal 60 cáps.",desc:"60 cáps. · Liposovit-C · Máxima absorción",pvp:19.95,icon:"🍊",flavors:["Sin sabor (cápsulas)"]},
+  {id:105,cat:"Colágeno & Belleza",name:"Vitamin D3+K2 Liposomal 60",desc:"60 cáps. · Liposovit D3+K2 · Forma liposomal",pvp:29.95,icon:"☀️",flavors:["Sin sabor (cápsulas)"]},
+  {id:106,cat:"Comida Saludable",name:"Protein Pancakes 1kg",desc:"1000g · Tortitas proteicas",pvp:20.95,icon:"🥞",flavors:["Neutro (toque vainilla)","Chocolate intenso"]},
+  {id:107,cat:"Comida Saludable",name:"Peanut Cream 350g",desc:"350g · Crema de cacahuete proteica",pvp:7.95,icon:"🥜",flavors:["Chocolate","Cookies","White Chocolate"]},
+  {id:108,cat:"Comida Saludable",name:"Peanut Cream 1kg",desc:"1000g · Formato familiar",pvp:14.95,icon:"🥜",flavors:["Crunchy Original","Smooth Original"]},
+  {id:109,cat:"Comida Saludable",name:"Hazelnut Cream 350g",desc:"350g · Crema de avellana gourmet",pvp:11.95,icon:"🌰",flavors:["White Chocolate","Dark Chocolate"]},
+  {id:110,cat:"Comida Saludable",name:"Protein Cream 250ml",desc:"250ml · Crema proteica sin maltitol",pvp:9.95,icon:"🍫",flavors:["Cookies & Dream","Happy Cream","Choco Brownie"]},
+  {id:111,cat:"Comida Saludable",name:"Harina de Avena 1kg",desc:"1000g · Gran variedad de sabores",pvp:6.85,icon:"🌾",flavors:["Rocher","Black cookies","Vainilla avellanas","Chocolate intenso","Chocolate blanco & Coco","Chocolate & Peanut Butter","Pistacho","Marie Cookies","Praliné","Dark Praliné","Glazed doughnut","Crema catalana","Pizza (salado)","Stracciatella","Croissant","White Chocolate & Black cookies","Choco White Rings","Chocolate Amazónico","Crema Rica Cookies","Chokokrac KitKat"]},
+  {id:112,cat:"Comida Saludable",name:"Copos de Avena 1kg",desc:"1000g · Avena en copos",pvp:6.85,icon:"🌾",flavors:["Rocher","Black cookies","Praliné","White Chocolate"]},
+  {id:113,cat:"Comida Saludable",name:"Rice Cream 1kg",desc:"1000g · Crema de arroz sabrosa",pvp:11.90,icon:"🍚",flavors:["Neutro","Salted Caramel","Bonbon Van Houten","Marie Cookies","White Chocolate","Choco Peanut Butter","Custard","Cinnamon Roll","Nutchoc","Rochello","Stracciatella","Praliné","Choco White Rings","Chocolate Amazónico","Crema Rica Cookies","Black Cookies","Chokokrac KitKat","Dubai Chocolate"]},
+  {id:114,cat:"Comida Saludable",name:"Sweet Potato 1kg",desc:"1000g · Boniato en polvo · Sano",pvp:20.60,icon:"🍠",flavors:["Neutro"]},
+  {id:115,cat:"Comida Saludable",name:"Green Plus 320-350g",desc:"320-350g · VitaBerry + VitaVeggi + Glutamina",pvp:31.60,icon:"🥦",flavors:["Neutro","Té de hierbabuena"]},
+  {id:116,cat:"Comida Saludable",name:"Syrups & Sauces 250ml",desc:"250ml · Sin azúcar · Sin calorías · Vegano",pvp:4.95,icon:"🍯",flavors:["Sauce BBQ Original","Sauce Ketchup & Sweet Chili","Syrup Choco Dubai Intense","Syrup White Choco & Creamy Peanut","Syrup Choco Milk & Creamy Peanut","Syrup Black Cookies Cream"]},
+  {id:117,cat:"Comida Saludable",name:"Aqua Marine 1L",desc:"1L · Agua de mar hipertónica",pvp:15.95,icon:"🌊",flavors:["Marine water (sabor natural)"]},
+  {id:118,cat:"Comida Saludable",name:"Aloe Vera Juice 1L",desc:"1L · Aloe vera 100% Barbadensis",pvp:20.95,icon:"🌵",flavors:["Aloe Vera natural"]},
+  {id:119,cat:"Snacks Proteicos",name:"Protein Muffin 15 ud.",desc:"Expositor 15 uds. · Alto proteína · Bajo azúcar",pvp:23.85,icon:"🧁",flavors:["Chocolate + Choco Cream","Chocolate con Caramel + White Choco"]},
+  {id:120,cat:"Snacks Proteicos",name:"Protein Doughnut 15 ud.",desc:"Expositor 15 uds. · Donut proteico",pvp:29.85,icon:"🍩",flavors:["Black cookies + white choco","Praliné + white choco","Black cookies + choco negro","Black cookies + Speculoos Cream"]},
+  {id:121,cat:"Snacks Proteicos",name:"Protein Brownie 15 ud.",desc:"Expositor 15 uds. · Brownie proteico",pvp:29.85,icon:"🍰",flavors:["Chocolate & Choco Chips","Chocolate & White Choco Chips"]},
+  {id:122,cat:"Snacks Proteicos",name:"Protein Tender Bar 18 ud.",desc:"18 uds. · Barrita crujiente alta proteína",pvp:52.95,icon:"🍫",flavors:["Rocher","Cheesecake Blackcurrant","Vanilla & White Chocolate","Chocolate"]},
+  {id:123,cat:"Snacks Proteicos",name:"FlapJack 24 ud. (120g/ud)",desc:"24 uds. · Barrita avena gourmet con Toppings",pvp:60.00,icon:"🍪",flavors:["Black Cookies (con topping)","White Choco Rings (con topping)","Rocher (con topping)","White Chocolate","Triple Choco (con topping)","Yogurt","Chocolate Amazónico (con topping)","White Choco Amazónico (con topping)"]},
+  {id:124,cat:"Snacks Proteicos",name:"Protein Rings 210g",desc:"210g · Snack proteico · Sin azúcar · Vegano",pvp:5.90,icon:"⭕",flavors:["Chocolate Gluten Free","Cookies & Cream Gluten Free","Peanut Butter Gluten Free","Strawberry"]},
+  {id:125,cat:"Snacks Proteicos",name:"Protein Tender Balls 10 ud.",desc:"10 uds. · Bolitas proteicas crujientes",pvp:24.95,icon:"🔴",flavors:["Milk Chocolate"]},
+  {id:126,cat:"Accesorios",name:"Shaker Gold iO Genix 700ml",desc:"700ml · Color dorado · Diseño premium",pvp:5.95,icon:"🥤",flavors:["Dorado"]},
+  {id:127,cat:"Accesorios",name:"WaterJug iO Genix 1,9L",desc:"1,9L · Negro mate · Logo amarillo",pvp:15.95,icon:"💧",flavors:["Negro mate + logo amarillo"]},
+  {id:128,cat:"Accesorios",name:"Straps Pro iO Genix",desc:"2 straps · Amarillo/negro · Almohadilla premium",pvp:14.95,icon:"🤝",flavors:["Amarillo / Negro"]},
+  {id:129,cat:"Accesorios",name:"Guanillas GripAd iO Genix",desc:"2 gripad · Palma silicona · Máximo confort",pvp:11.95,icon:"🧤",flavors:["Amarillo / Negro"]},
+  {id:130,cat:"Accesorios",name:"Pill Box Pastillero 7 comp.",desc:"7 compartimentos semanales · Color dorado",pvp:3.95,icon:"💊",flavors:["Dorado"]},
+  {id:131,cat:"Accesorios",name:"Toalla Entrenamiento",desc:"Logo iO Genix · Calidad gym",pvp:12.95,icon:"🏋️",flavors:["Negra con logo dorado","Rosa con logo blanco"]},
+  {id:132,cat:"Accesorios",name:"Nasal Strips 30 ud.",desc:"30 tiras · Hipoalergénicas · Respiración",pvp:24.95,icon:"👃",flavors:["Talla única"]},
+  {id:133,cat:"Accesorios",name:"Redu Pain CBD Gel 60ml",desc:"60ml · Gel CBD · Alivio muscular",pvp:13.95,icon:"💆",flavors:["Gel neutro"]},
+];
+
+const CATS = ["Todos", ...new Set(PRODUCTS.map(p=>p.cat))];
+let cart=[], activeCat="Todos", modalProd=null, selFlavor=null;
+
+function disc(p){return +(p*0.9).toFixed(2);}
+function fmt(n){return n.toFixed(2).replace('.',',')+' €';}
+
+function renderCats(){
+  document.getElementById("cats").innerHTML=CATS.map(c=>
+    `<button class="cat${c===activeCat?' on':''}" onclick="setCat(${JSON.stringify(c)})">${c}</button>`
+  ).join('');
+}
+function setCat(c){activeCat=c;renderCats();render();}
+
+function render(){
+  const q=document.getElementById("search").value.toLowerCase().trim();
+  const f=PRODUCTS.filter(p=>(activeCat==="Todos"||p.cat===activeCat)&&(!q||p.name.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q)));
+  const g=document.getElementById("grid");
+  if(!f.length){g.innerHTML='<div class="empty-state">Sin resultados 🔍</div>';return;}
+  g.innerHTML=f.map(p=>{
+    const inCart=cart.filter(c=>c.p.id===p.id);
+    const tqty=inCart.reduce((s,c)=>s+c.qty,0);
+    const dp=disc(p.pvp);
+    const sv=(p.pvp-dp).toFixed(2).replace('.',',');
+    const fhint=p.flavors.length===1
+      ?`<div class="flavor-hint">${p.flavors[0]}</div>`
+      :`<div class="flavor-hint">🎨 ${p.flavors.length} sabores disponibles</div>`;
+    return `<div class="card">
+      <div class="card-emoji">${p.icon}</div>
+      <div class="card-body">
+        <div class="card-cat">${p.cat}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc}</div>
+        ${fhint}
+        <div class="price-row">
+          <span class="price-old">${fmt(p.pvp)}</span>
+          <span class="price-new">${fmt(dp)}</span>
+          <span class="price-save">-${sv}€</span>
+        </div>
+        <button class="add-btn${tqty>0?' added':''}" onclick="openF(${p.id})">
+          ${tqty>0?`✓ En pedido (${tqty}) · Añadir más`:'🎨 Elegir sabor y añadir'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openF(id){
+  const p=PRODUCTS.find(x=>x.id===id);
+  modalProd=p; selFlavor=null;
+  document.getElementById("mtitle").textContent=p.name;
+  document.getElementById("mprice").innerHTML=`${fmt(disc(p.pvp))} <small>${fmt(p.pvp)}</small>`;
+  const auto=p.flavors.length===1;
+  document.getElementById("flist").innerHTML=p.flavors.map((f,i)=>
+    `<div class="fopt${auto?' sel':''}" id="fo${i}" data-idx="${i}" data-flavor="${f.replace(/"/g,'&quot;').replace(/'/g,'&#39;')}" onclick="selF(this)">
+      <div class="fdot"><div class="fdot-in"></div></div>
+      <span class="fname">${f}</span>
+    </div>`
+  ).join('');
+  const btn=document.getElementById("mconfirm");
+  if(auto){selFlavor=p.flavors[0];btn.disabled=false;btn.textContent="Añadir al pedido";}
+  else{btn.disabled=true;btn.textContent="Elige un sabor para continuar";}
+  document.getElementById("mbg").classList.add("on");
+  document.body.style.overflow="hidden";
+}
+
+function selF(el){
+  selFlavor=el.dataset.flavor;
+  document.querySelectorAll(".fopt").forEach(e=>e.classList.remove("sel"));
+  el.classList.add("sel");
+  const btn=document.getElementById("mconfirm");
+  btn.disabled=false; btn.textContent="Añadir al pedido";
+}
+
+function closeF(){document.getElementById("mbg").classList.remove("on");document.body.style.overflow="";modalProd=null;selFlavor=null;}
+function closeFM(e){if(e.target===document.getElementById("mbg"))closeF();}
+
+function confirmF(){
+  if(!selFlavor||!modalProd)return;
+  const ex=cart.find(c=>c.p.id===modalProd.id&&c.flavor===selFlavor);
+  if(ex)ex.qty++;
+  else cart.push({p:modalProd,flavor:selFlavor,qty:1});
+  updateBadge();render();closeF();
+}
+
+function updateBadge(){document.getElementById("badge").textContent=cart.reduce((s,c)=>s+c.qty,0);}
+
+function renderCart(){
+  const cl=document.getElementById("clist");
+  if(!cart.length){cl.innerHTML='<div class="ecart">El carrito está vacío 🛒</div>';document.getElementById("totbox").innerHTML='';return;}
+  let sub=0,orig=0;
+  cl.innerHTML=cart.map((c,i)=>{
+    const dp=disc(c.p.pvp);
+    const tot=+(dp*c.qty).toFixed(2);
+    const old=+(c.p.pvp*c.qty).toFixed(2);
+    sub+=tot;orig+=old;
+    return `<div class="ci">
+      <div class="ci-info">
+        <div class="ci-name">${c.p.name}</div>
+        <div class="ci-fl">🎨 ${c.flavor}</div>
+        <div class="ci-qty">x${c.qty} · ${fmt(dp)} c/u
+          <button class="qsmall" onclick="cqty(${i},-1)">−</button>
+          <button class="qsmall" onclick="cqty(${i},1)">+</button>
+        </div>
+      </div>
+      <div class="ci-prices"><div class="ci-old">${fmt(old)}</div><div class="ci-tot">${fmt(tot)}</div></div>
+      <button class="rbtn" onclick="rem(${i})">✕</button>
+    </div>`;
+  }).join('');
+  const sav=orig-sub;
+  document.getElementById("totbox").innerHTML=`
+    <div class="trow"><span class="tlabel">Precio original</span><span class="tval">${fmt(orig)}</span></div>
+    <div class="trow"><span class="tlabel">Descuento 10%</span><span class="tdisc">-${fmt(sav)}</span></div>
+    <div class="tfinal"><span class="tflabel">Total a pagar</span><span class="tfval">${fmt(sub)}</span></div>`;
+}
+
+function cqty(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);updateBadge();renderCart();render();}
+function rem(i){cart.splice(i,1);updateBadge();renderCart();render();}
+
+function toggleCart(){
+  const cp=document.getElementById("cart-panel"),ov=document.getElementById("overlay");
+  const open=!cp.classList.contains("on");
+  cp.classList.toggle("on",open);ov.classList.toggle("on",open);
+  if(open)renderCart();
+}
+
+async function payAndNotify(){
+  const name=document.getElementById("cname").value.trim();
+  if(!name){const i=document.getElementById("cname");i.style.borderColor="#c9a84c";i.placeholder="⚠️ Escribe tu nombre";i.focus();return;}
+  if(!cart.length){alert("El carrito está vacío");return;}
+
+  const btn=document.getElementById("pay-btn");
+  const errBox=document.getElementById("pay-error");
+  errBox.style.display="none";
+
+  // 1) Preparamos el resumen y abrimos WhatsApp (el cliente pulsa enviar)
+  let sub=0,orig=0;
+  const lines=cart.map(c=>{
+    const dp=disc(c.p.pvp);
+    const tot=+(dp*c.qty).toFixed(2);
+    sub+=tot;orig+=+(c.p.pvp*c.qty).toFixed(2);
+    return `• ${c.p.name} — ${c.flavor} x${c.qty} = ${fmt(tot)}`;
+  });
+  const sav=(orig-sub).toFixed(2).replace('.',',');
+  const msg=`🛒 *PEDIDO D'ARO BODY FIT*\n\n👤 *Cliente:* ${name}\n📍 Santa Cristina d'Aro\n\n*Productos:*\n${lines.join('\n')}\n\n🏷️ Precio original: ${fmt(orig)}\n🎉 Descuento 10%: -${sav}€\n💰 *TOTAL: ${fmt(sub)}*\n\n💳 _Pago con tarjeta iniciado — pendiente de confirmación_`;
+  window.open(`https://wa.me/34634614531?text=${encodeURIComponent(msg)}`,'_blank');
+
+  // 2) Llamamos a nuestra Netlify Function para crear la sesión de Stripe
+  btn.disabled=true;
+  btn.textContent="Preparando pago...";
+
+  try{
+    const payload={
+      clientName:name,
+      cart:cart.map(c=>({id:c.p.id, flavor:c.flavor, qty:c.qty}))
+    };
+    const res=await fetch('/api/create-checkout',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    const data=await res.json();
+    if(!res.ok||!data.url){
+      throw new Error(data.error||'No se pudo iniciar el pago');
+    }
+    // 3) Redirigimos al cliente a la pasarela de pago de Stripe
+    window.location.href=data.url;
+  }catch(err){
+    console.error(err);
+    errBox.textContent="⚠️ "+(err.message||"No se pudo iniciar el pago. Inténtalo de nuevo.");
+    errBox.style.display="block";
+    btn.disabled=false;
+    btn.innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg> Pagar con tarjeta`;
+  }
+}
+
+renderCats();render();
+</script>
+</body>
+</html>
