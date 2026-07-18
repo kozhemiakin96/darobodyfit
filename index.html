@@ -247,6 +247,26 @@ const CATS_ORDER = ["Packs","Asesoramiento","Ropa DBF","Proteínas","Creatina","
 const CATS = ["Todos", ...CATS_ORDER.filter(c=>PRODUCTS.some(p=>p.cat===c))];
 let cart=[], activeCat="Todos", modalProd=null, selFlavor=null;
 
+// Guardamos el carrito en localStorage cada vez que cambia, para que
+// sobreviva si el WebView del gimnasio recarga la página (por ejemplo,
+// al volver de WhatsApp desde "Consultar" o desde el pago con Stripe).
+function saveCart(){
+  try{
+    localStorage.setItem('darobodyfit_cart', JSON.stringify(cart.map(c=>({id:c.p.id,flavor:c.flavor,qty:c.qty}))));
+  }catch(e){console.error('No se pudo guardar el carrito:', e);}
+}
+function loadCart(){
+  try{
+    const raw=localStorage.getItem('darobodyfit_cart');
+    if(!raw)return;
+    const arr=JSON.parse(raw);
+    cart=arr.map(i=>{
+      const p=PRODUCTS.find(x=>x.id===i.id);
+      return p?{p,flavor:i.flavor,qty:i.qty}:null;
+    }).filter(Boolean);
+  }catch(e){console.error('No se pudo restaurar el carrito:', e);}
+}
+
 function disc(p){const rate=(p.packDiscount!=null)?p.packDiscount:0.10;return +(p.pvp*(1-rate)).toFixed(2);}
 function fmt(n){return n.toFixed(2).replace('.',',')+' €';}
 
@@ -356,7 +376,7 @@ function confirmF(){
   const ex=cart.find(c=>c.p.id===modalProd.id&&c.flavor===selFlavor);
   if(ex)ex.qty++;
   else cart.push({p:modalProd,flavor:selFlavor,qty:1});
-  updateBadge();render();closeF();
+  saveCart();updateBadge();render();closeF();
 }
 
 function updateBadge(){document.getElementById("badge").textContent=cart.reduce((s,c)=>s+c.qty,0);}
@@ -390,8 +410,8 @@ function renderCart(){
     <div class="tfinal"><span class="tflabel">Total a pagar</span><span class="tfval">${fmt(sub)}</span></div>`;
 }
 
-function cqty(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);updateBadge();renderCart();render();}
-function rem(i){cart.splice(i,1);updateBadge();renderCart();render();}
+function cqty(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);saveCart();updateBadge();renderCart();render();}
+function rem(i){cart.splice(i,1);saveCart();updateBadge();renderCart();render();}
 
 function toggleCart(){
   const cp=document.getElementById("cart-panel"),ov=document.getElementById("overlay");
@@ -494,7 +514,7 @@ document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) checkPe
 window.addEventListener('pageshow', checkPendingCheckout);
 checkPendingCheckout();
 
-renderCats();render();
+loadCart();updateBadge();renderCats();render();
 </script>
 </body>
 </html>
