@@ -15,7 +15,8 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 // producto en la tienda, actualiza también aquí el id y el pvp.
 const PRODUCTS = require('./catalog.json');
 
-const DISCOUNT = 0.10; // 10% de descuento para clientes del gimnasio
+const DEFAULT_DISCOUNT = 0.10; // 10% de descuento estándar para clientes del gimnasio
+// Los packs llevan su propio campo "discount" (0.15) en catalog.json, que tiene prioridad.
 
 exports.handler = async (event) => {
   // Solo aceptamos POST
@@ -46,15 +47,17 @@ exports.handler = async (event) => {
       if (!product) {
         throw new Error(`Producto no encontrado: ${item.id}`);
       }
-      const discountedPrice = +(product.pvp * (1 - DISCOUNT)).toFixed(2);
+      const rate = (product.discount != null) ? product.discount : DEFAULT_DISCOUNT;
+      const discountedPrice = +(product.pvp * (1 - rate)).toFixed(2);
       const unitAmountCents = Math.round(discountedPrice * 100);
+      const discountLabel = `${Math.round(rate * 100)}% descuento aplicado`;
 
       return {
         price_data: {
           currency: 'eur',
           product_data: {
             name: `${product.name} — ${item.flavor}`,
-            description: `D'ARO BODY FIT · 10% descuento aplicado`,
+            description: `D'ARO BODY FIT · ${discountLabel}`,
           },
           unit_amount: unitAmountCents,
         },
